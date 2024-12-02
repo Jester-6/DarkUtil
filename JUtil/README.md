@@ -20,9 +20,9 @@ For Maven projects, add the following to your `pom.xml`:
 
 ```
 <dependency>
-    <groupId>com.example.math</groupId>
-    <artifactId>utility-math</artifactId>
-    <version>1.0.0</version>
+  <groupId>com.d.util</groupId>
+  <artifactId>j-util</artifactId>
+  <version>1.0.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
