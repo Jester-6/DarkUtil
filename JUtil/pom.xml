@@ -9,7 +9,7 @@
   <packaging>jar</packaging>
 
   <name>JUtil</name>
-  <url>https://github.com/Jester-6/JUnit.git</url>
+  <url>https://github.com/Jester-6/JUtil.git</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,11 +18,10 @@
   
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/Jester-6/JUnit.git</url>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/Jester-6/JUtil</url>
     </repository>
-  </distributionManagement>
+</distributionManagement>
 
   <dependencyManagement>
     <dependencies>
