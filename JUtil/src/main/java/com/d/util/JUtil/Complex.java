@@ -16,4 +16,6 @@ public class Complex {
 
 	public double getReal() { return realPart; }
 
+	public double getImaginary() { return imaginaryPart; }
+
 }
