@@ -14,4 +14,6 @@ public class Complex {
 		this.imaginaryPart = imaginary;
 	}
 
+	public double getReal() { return realPart; }
+
 }
