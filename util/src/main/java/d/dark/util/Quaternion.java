@@ -133,4 +133,38 @@ public class Quaternion {
 
 	public double mag() { return mag(); }
 
+	@Override
+	public String toString() {
+		String real = roundStr(r);
+		String strI = signStr(roundStr(i), "i");
+		String strJ = signStr(roundStr(j), "j");
+		String strK = signStr(roundStr(k), "k");
+
+		if (real.isBlank() && strI.isBlank() && strJ.isBlank() && strK.isBlank()) {
+			return "0";
+		} else {
+			real = real.isBlank() ? "0" : real;
+			return "(" + real + strI + strJ + strK + ")";
+		}
+	}
+
+	private String roundStr(double val) {
+		String roundedStr = String.valueOf(Math.round(val * 100000) / 100000.0);
+		if (roundedStr.endsWith(".0")) { roundedStr = roundedStr.replace(".0", ""); }
+		if (roundedStr.equals("0") || roundedStr.equals("-0")) { roundedStr = ""; }
+		return roundedStr;
+	}
+
+	private String signStr(String val, String imaginary) {
+		if (val.isBlank()) {
+			return " + 0";
+		} else {
+			if (val.startsWith("-")) {
+				return val.replace("-", " - ") + imaginary;
+			} else {
+				return " + " + val + imaginary;
+			}
+		}
+	}
+
 }
