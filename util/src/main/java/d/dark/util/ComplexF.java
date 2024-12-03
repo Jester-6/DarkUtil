@@ -1,17 +1,32 @@
 package d.dark.util;
 
 /**
- * A class representing a **complex number** in the form `a + bi`, where:
+ * <h1>Complex Number</h1> <br>
+ * A class representing a <big>complex number</big> in the form `a + bi` with
+ * float precision, where:
  * <ul>
  * <li><b>a</b> is the real part</li>
  * <li><b>b</b> is the imaginary part</li>
  * </ul>
+ * for double precision Complex number, use {@link Complex}
  * <p>
- * This class is immutable and thread-safe due to its use of final fields. It
- * provides methods for performing common operations on complex numbers such as:
- * addition, subtraction, multiplication, division, exponentiation, and root
- * calculation. It also includes methods to calculate properties like magnitude
- * and argument.
+ * It provides methods for performing common operations on complex numbers such
+ * as:
+ * <ul>
+ * <li>Addition: {@link #add(ComplexNumber)}</li>
+ * <li>Substraction: {@link #sub(ComplexNumber)}</li>
+ * <li>Multiplication: {@link #mul(double)}, {@link #mul(ComplexNumber)}</li>
+ * <li>Division: {@link #div(double)}, {@link #div(ComplexNumber)}</li>
+ * <li>Raising to the power: {@link #pow(double)},
+ * {@link #pow(ComplexNumber)}</li>
+ * <li>Root: {@link #root(double)}</li>
+ * <li>Exponential: {@link #exp()}</li>
+ * <li>Natural Logarithm: {@link #ln()}</li>
+ * <li>Conjugate: {@link #conjugate()}</li>
+ * <li>Magnitude (modulus): {@link #mag()}</li>
+ * <li>Angle (argument): {@link #angle()}</li>
+ * <li>Hyperbolic sine of this number: {@link #sinh()}</li>
+ * </ul>
  * </p>
  * <p>
  * <b>Usage Example:</b>
@@ -23,12 +38,12 @@ package d.dark.util;
  * </pre>
  * </p>
  */
-public class ComplexF {
+public class ComplexF extends ComplexNumber {
 
-	public static void main(String[] args) { System.out.println("test"); }
-
-	public final float r; // The real part of the complex number (immutable)
-	public final float i; // The imaginary part of the complex number (immutable)
+	/* Immutable real part of the complex number */
+	public final float r;
+	/* Immutable imaginary part of the complex number */
+	public final float i;
 
 	/**
 	 * Default constructor initializing the complex number to `0 + 0i`.
@@ -50,7 +65,7 @@ public class ComplexF {
 	 * @param complex the complex number to copy
 	 * @see #Complex(float, float)
 	 */
-	public ComplexF(ComplexF complex) { this(complex.getReal(), complex.getImaginary()); }
+	public ComplexF(ComplexNumber complex) { this(complex.floatR(), complex.floatI()); }
 
 	/**
 	 * Constructor initializing the complex number with the given real and imaginary
@@ -64,14 +79,8 @@ public class ComplexF {
 		this.i = imaginary;
 	}
 
-	/**
-	 * Adds another complex number to this complex number.
-	 *
-	 * @param c the complex number to add
-	 * @return a new {@link ComplexF} representing the sum
-	 * @see #add(float, float)
-	 */
-	public ComplexF add(ComplexF c) { return add(c.r, c.i); }
+	@Override
+	public ComplexF add(ComplexNumber c) { return add(c.floatR(), c.floatI()); }
 
 	/**
 	 * Adds real number to this complex number.
@@ -91,14 +100,8 @@ public class ComplexF {
 	 */
 	public ComplexF add(float r, float i) { return new ComplexF(this.r + r, this.i + i); }
 
-	/**
-	 * Subtracts another complex number from this complex number.
-	 *
-	 * @param c the complex number to subtract
-	 * @return a new {@link ComplexF} representing the difference
-	 * @see #sub(float, float)
-	 */
-	public ComplexF sub(ComplexF c) { return sub(c.r, c.i); }
+	@Override
+	public ComplexF sub(ComplexNumber c) { return sub(c.floatR(), c.floatI()); }
 
 	/**
 	 * Subtracts a real number from this complex number.
@@ -118,14 +121,8 @@ public class ComplexF {
 	 */
 	public ComplexF sub(float r, float i) { return new ComplexF(this.r - r, this.i - i); }
 
-	/**
-	 * Multiplies this complex number with another complex number.
-	 *
-	 * @param c the complex number to multiply by
-	 * @return a new {@link ComplexF} representing the product
-	 * @see #mul(float, float)
-	 */
-	public ComplexF mul(ComplexF c) { return mul(c.r, c.i); }
+	@Override
+	public ComplexF mul(ComplexNumber c) { return mul(c.floatR(), c.floatI()); }
 
 	/**
 	 * Multiplies this complex number by a real number.
@@ -145,14 +142,8 @@ public class ComplexF {
 	 */
 	public ComplexF mul(float r, float i) { return new ComplexF(this.r * r - this.i * i, this.r * i + this.i * r); }
 
-	/**
-	 * Divides this complex number by another complex number.
-	 *
-	 * @param c the complex number to divide by
-	 * @return a new {@link ComplexF} representing the quotient
-	 * @see #div(float, float)
-	 */
-	public ComplexF div(ComplexF c) { return div(c.r, c.i); }
+	@Override
+	public ComplexF div(ComplexNumber c) { return div(c.floatR(), c.floatI()); }
 
 	/**
 	 * Divides this complex number by a real and imaginary number.
@@ -185,21 +176,16 @@ public class ComplexF {
 	 * @see #root(float)
 	 */
 	public ComplexF pow(float power) {
-		float len = magnitude();
-		float phi = angle();
+		double len = magnitude();
+		double phi = angle();
 		float A = (float) Math.pow(len, power);
 		float cos = (float) Math.cos(power * phi);
 		float sin = (float) Math.sin(power * phi);
 		return new ComplexF(A * cos, A * sin);
 	}
 
-	/**
-	 * Raises this complex number to the power of another complex number.
-	 *
-	 * @param exponent the complex exponent
-	 * @return a new {@link ComplexF} representing this^exponent
-	 */
-	public ComplexF pow(ComplexF exponent) {
+	@Override
+	public ComplexF pow(ComplexNumber exponent) {
 		// ln(this)
 		ComplexF logBase = this.ln();
 		// (c + di) * ln(this)
@@ -216,97 +202,58 @@ public class ComplexF {
 	 * @see #pow(float)
 	 */
 	public ComplexF root(float root) {
-		float len = magnitude();
-		float phi = angle() / root;
+		double len = magnitude();
+		double phi = angle() / root;
 		float A = (float) Math.pow(len, 1.0 / root);
 		float cos = (float) Math.cos(phi);
 		float sin = (float) Math.sin(phi);
 		return new ComplexF(A * cos, A * sin);
 	}
 
-	/**
-	 * Computes the exponential of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing e^(this)
-	 */
+	@Override
 	public ComplexF exp() {
 		float expReal = (float) Math.exp(this.r);
 		return new ComplexF(expReal * (float) Math.cos(this.i), expReal * (float) Math.sin(this.i));
 	}
 
-	/**
-	 * Computes the natural logarithm of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing ln(this)
-	 */
+	@Override
 	public ComplexF ln() {
 		float magnitude = (float) Math.log(magnitude());
-		float angle = argument();
+		float angle = argumentF();
 		return new ComplexF(magnitude, angle);
 	}
 
-	/**
-	 * Computes the sine of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing sin(this)
-	 */
+	@Override
 	public ComplexF sin() {
 		float realPart = (float) (Math.sin(this.r) * Math.cosh(this.i));
 		float imaginaryPart = (float) (Math.cos(this.r) * Math.sinh(this.i));
 		return new ComplexF(realPart, imaginaryPart);
 	}
 
-	/**
-	 * Computes the cosine of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing cos(this)
-	 */
+	@Override
 	public ComplexF cos() {
 		float realPart = (float) (Math.cos(this.r) * Math.cosh(this.i));
 		float imaginaryPart = (float) (-Math.sin(this.r) * Math.sinh(this.i));
 		return new ComplexF(realPart, imaginaryPart);
 	}
 
-	/**
-	 * Computes the tangent of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing tan(this)
-	 */
+	@Override
 	public ComplexF tan() { return this.sin().div(this.cos()); }
 
-	/**
-	 * Computes the hyperbolic sine of this complex number.
-	 *
-	 * @return a new {@link ComplexF} representing sinh(this)
-	 */
+	@Override
 	public ComplexF sinh() {
 		float realPart = (float) (Math.sinh(this.r) * Math.cos(this.i));
 		float imaginaryPart = (float) (Math.cosh(this.r) * Math.sin(this.i));
 		return new ComplexF(realPart, imaginaryPart);
 	}
 
-	/**
-	 * Computes the conjugate of this complex number.
-	 *
-	 * @return a new {@link ComplexF} object representing the conjugate, with the
-	 *         same real part and negated imaginary part
-	 */
+	@Override
 	public ComplexF conjugate() { return new ComplexF(this.r, -this.i); }
 
-	/**
-	 * Projects this complex number onto the real axis.
-	 *
-	 * @return a new {@link ComplexF} with the same real part and zero imaginary
-	 *         part
-	 */
+	@Override
 	public ComplexF projectOntoReal() { return new ComplexF(this.r, 0); }
 
-	/**
-	 * Projects this complex number onto the imaginary axis.
-	 *
-	 * @return a new {@link ComplexF} with zero real part and the same imaginary
-	 *         part
-	 */
+	@Override
 	public ComplexF projectOntoImaginary() { return new ComplexF(0, this.i); }
 
 	/**
@@ -316,7 +263,7 @@ public class ComplexF {
 	 * @return the squared magnitude, computed as {@code r^2 + i^2}
 	 * @see #magnitude()
 	 */
-	public float absoluteValue() { return r * r + i * i; }
+	public float absoluteValueF() { return r * r + i * i; }
 
 	/**
 	 * Computes the magnitude (length) of this complex number.
@@ -324,7 +271,7 @@ public class ComplexF {
 	 * @return the magnitude, computed as {@code sqrt(r^2 + i^2)}
 	 * @see #absoluteValue()
 	 */
-	public float magnitude() { return (float) Math.sqrt(absoluteValue()); }
+	public float magnitudeF() { return (float) Math.sqrt(absoluteValue()); }
 
 	/**
 	 * Computes the magnitude (length) of this complex number.
@@ -332,7 +279,7 @@ public class ComplexF {
 	 * @return the magnitude, computed as {@code sqrt(r^2 + i^2)}
 	 * @see #absoluteValue()
 	 */
-	public float modulus() { return magnitude(); }
+	public float modulusF() { return magnitudeF(); }
 
 	/**
 	 * Computes the magnitude (length) of this complex number.
@@ -340,7 +287,7 @@ public class ComplexF {
 	 * @return the magnitude, computed as {@code sqrt(r^2 + i^2)}
 	 * @see #absoluteValue()
 	 */
-	public float mod() { return magnitude(); }
+	public float modF() { return magnitudeF(); }
 
 	/**
 	 * Computes the argument (angle) of this complex number.
@@ -348,7 +295,7 @@ public class ComplexF {
 	 * @return the argument in radians, computed as {@code atan2(i, r)}
 	 * @see Math#atan2(float, float)
 	 */
-	public float argument() { return (float) Math.atan2(i, r); }
+	public float argumentF() { return (float) Math.atan2(i, r); }
 
 	/**
 	 * Computes the argument (angle) of this complex number.
@@ -356,7 +303,7 @@ public class ComplexF {
 	 * @return the argument in radians, computed as {@code atan2(i, r)}
 	 * @see Math#atan2(float, float)
 	 */
-	public float angle() { return argument(); }
+	public float angleF() { return argumentF(); }
 
 	/**
 	 * Computes the argument (angle) of this complex number.
@@ -364,7 +311,7 @@ public class ComplexF {
 	 * @return the argument in radians, computed as {@code atan2(i, r)}
 	 * @see Math#atan2(float, float)
 	 */
-	public float arg() { return argument(); }
+	public float argF() { return argumentF(); }
 
 	/**
 	 * Computes the sum of two complex numbers.
@@ -374,9 +321,9 @@ public class ComplexF {
 	 * @return a new {@link ComplexF} object representing the sum
 	 * @see #add(ComplexF)
 	 */
-	public static ComplexF sum(ComplexF a, ComplexF b) {
-		float r = a.r + b.r;
-		float i = a.i + b.i;
+	public static ComplexF sum(ComplexNumber a, ComplexNumber b) {
+		float r = a.floatR() + b.floatR();
+		float i = a.floatI() + b.floatI();
 		return new ComplexF(r, i);
 	}
 
@@ -388,9 +335,9 @@ public class ComplexF {
 	 * @return a new {@link ComplexF} object representing the difference
 	 * @see #sub(ComplexF)
 	 */
-	public static ComplexF difference(ComplexF a, ComplexF b) {
-		float r = a.r - b.r;
-		float i = a.i - b.i;
+	public static ComplexF difference(ComplexNumber a, ComplexNumber b) {
+		float r = a.floatR() - b.floatR();
+		float i = a.floatI() - b.floatI();
 		return new ComplexF(r, i);
 	}
 
@@ -402,9 +349,9 @@ public class ComplexF {
 	 * @return a new {@link ComplexF} object representing the product
 	 * @see #mul(ComplexF)
 	 */
-	public static ComplexF product(ComplexF a, ComplexF b) {
-		float r = a.r * b.r - a.i * b.i;
-		float i = a.r * b.i + a.i * b.r;
+	public static ComplexF product(ComplexNumber a, ComplexNumber b) {
+		float r = a.floatR() * b.floatR() - a.floatI() * b.floatI();
+		float i = a.floatR() * b.floatI() + a.floatI() * b.floatR();
 		return new ComplexF(r, i);
 	}
 
@@ -416,10 +363,10 @@ public class ComplexF {
 	 * @return a new {@link ComplexF} object representing the quotient
 	 * @see #div(ComplexF)
 	 */
-	public static ComplexF quotient(ComplexF a, ComplexF b) {
-		float r = a.r * b.r + a.i * b.i;
-		float i = a.i * b.r - a.r * b.i;
-		float div = b.r * b.r + b.i * b.i;
+	public static ComplexF quotient(ComplexNumber a, ComplexNumber b) {
+		float r = a.floatR() * b.floatR() + a.floatI() * b.floatI();
+		float i = a.floatI() * b.floatR() - a.floatR() * b.floatI();
+		float div = b.floatR() * b.floatR() + b.floatI() * b.floatI();
 		return new ComplexF(r / div, i / div);
 	}
 
@@ -430,65 +377,20 @@ public class ComplexF {
 	 * @param epsilon the tolerance for equality
 	 * @return true if the numbers are approximately equal, false otherwise
 	 */
-	public boolean equals(ComplexF other, float epsilon) { return Math.abs(this.r - other.r) < epsilon && Math.abs(this.i - other.i) < epsilon; }
+	public boolean equals(ComplexNumber other, float epsilon) {
+		return Math.abs(this.r - other.floatR()) < epsilon && Math.abs(this.i - other.floatI()) < epsilon;
+	}
 
-	/**
-	 * Gets the real part of this complex number.
-	 *
-	 * @return the real part
-	 */
-	public float getReal() { return r; }
-
-	/**
-	 * Gets the imaginary part of this complex number.
-	 *
-	 * @return the imaginary part
-	 */
-	public float getImaginary() { return i; }
-
-	/**
-	 * Returns a string representation of this complex number.
-	 * <p>
-	 * The string representation is formatted as:
-	 * <ul>
-	 * <li><code>0</code> if both real and imaginary parts are zero</li>
-	 * <li><code>a</code> if the imaginary part is zero</li>
-	 * <li><code>bi</code> if the real part is zero</li>
-	 * <li><code>(a + bi)</code> if both parts are nonzero</li>
-	 * </ul>
-	 * </p>
-	 *
-	 * @return the string representation of this complex number
-	 */
 	@Override
-	public String toString() {
-		String real = roundStr(r);
-		String imaginary = roundStr(i);
+	public double getR() { return r; }
 
-		if (real.isBlank() && imaginary.isBlank()) {
-			return "0";
-		} else if (real.isBlank()) {
-			return imaginary + "i";
-		} else if (imaginary.isBlank()) {
-			return real;
-		} else {
-			imaginary = imaginary.startsWith("-") ? imaginary.replace("-", " - ") : " + " + imaginary;
-			return "(" + real + imaginary + "i)";
-		}
-	}
+	@Override
+	public double getI() { return i; }
 
-	/**
-	 * Rounds the given value to 5 decimal places and converts it to a string.
-	 *
-	 * @param val the value to round
-	 * @return the rounded value as a string, or an empty string if the result is
-	 *         zero
-	 */
-	private String roundStr(float val) {
-		String roundedStr = String.valueOf(Math.round(val * 100000) / 100000.0);
-		if (roundedStr.endsWith(".0")) { roundedStr = roundedStr.replace(".0", ""); }
-		if (roundedStr.equals("0") || roundedStr.equals("-0")) { roundedStr = ""; }
-		return roundedStr;
-	}
+	@Override
+	public float floatR() { return r; }
+
+	@Override
+	public float floatI() { return i; }
 
 }

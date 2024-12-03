@@ -13,9 +13,9 @@ public class Quaternion {
 
 	public Quaternion(double real, double i) { this(real, i, 0, 0); }
 
-	public Quaternion(Complex c) { this(c.getReal(), c.getImaginary(), 0, 0); }
+	public Quaternion(Complex c) { this(c.getR(), c.getI(), 0, 0); }
 
-	public Quaternion(Complex c, double j, double k) { this(c.getReal(), c.getImaginary(), j, k); }
+	public Quaternion(Complex c, double j, double k) { this(c.getR(), c.getI(), j, k); }
 
 	public Quaternion(Quaternion q) { this(q.r, q.i, q.j, q.k); }
 
@@ -26,11 +26,11 @@ public class Quaternion {
 		this.k = k;
 	}
 
-	public Quaternion add(Complex c) { return add(c.getReal(), c.getImaginary()); }
+	public Quaternion add(Complex c) { return add(c.getR(), c.getI()); }
 
-	public Quaternion add(Complex c, double i) { return add(c.getReal(), c.getImaginary(), i); }
+	public Quaternion add(Complex c, double i) { return add(c.getR(), c.getI(), i); }
 
-	public Quaternion add(Complex c, double i, double k) { return add(c.getReal(), c.getImaginary(), i, k); }
+	public Quaternion add(Complex c, double i, double k) { return add(c.getR(), c.getI(), i, k); }
 
 	public Quaternion add(Quaternion c) { return add(this.r, this.i, this.j, this.k); }
 
@@ -42,11 +42,11 @@ public class Quaternion {
 
 	public Quaternion add(double real, double i, double j, double k) { return new Quaternion(this.r + real, this.i + i, this.j + j, this.j + k); }
 
-	public Quaternion sub(Complex c) { return sub(c.getReal(), c.getImaginary()); }
+	public Quaternion sub(Complex c) { return sub(c.getR(), c.getI()); }
 
-	public Quaternion sub(Complex c, double i) { return sub(c.getReal(), c.getImaginary(), i); }
+	public Quaternion sub(Complex c, double i) { return sub(c.getR(), c.getI(), i); }
 
-	public Quaternion sub(Complex c, double i, double k) { return sub(c.getReal(), c.getImaginary(), i, k); }
+	public Quaternion sub(Complex c, double i, double k) { return sub(c.getR(), c.getI(), i, k); }
 
 	public Quaternion sub(Quaternion c) { return sub(this.r, this.i, this.j, this.k); }
 
@@ -113,7 +113,7 @@ public class Quaternion {
 
 	public Quaternion mul(Quaternion q) { return mul(q.r, q.i, q.j, q.j); }
 
-	public Quaternion mul(Complex c) { return mul(c.getReal(), c.getImaginary()); }
+	public Quaternion mul(Complex c) { return mul(c.getR(), c.getI()); }
 
 	// TODO: divide by quaternion, complex and (r, i, j, k), (r, i, j), (r, i)
 	public Quaternion div(double real) { return new Quaternion(this.r / real, this.i / real, this.j / real, this.k / real); }
