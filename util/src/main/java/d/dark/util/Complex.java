@@ -27,8 +27,8 @@ public class Complex {
 
 	public static void main(String[] args) { System.out.println("test"); }
 
-	private final double r; // The real part of the complex number (immutable)
-	private final double i; // The imaginary part of the complex number (immutable)
+	public final double r; // The real part of the complex number (immutable)
+	public final double i; // The imaginary part of the complex number (immutable)
 
 	/**
 	 * Default constructor initializing the complex number to `0 + 0i`.
