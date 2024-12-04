@@ -1,3 +1,9 @@
+# /////////////////////////////////
+# <ul>WORK IN PROGRESS</ul>
+# /////////////////////////////////
+
+<br><br>
+
 # Utility Math Library
 
 This library provides utility classes for mathematical computations. It is designed to be modular and extensible, offering a growing suite of tools to handle various mathematical operations efficiently.
@@ -19,10 +25,17 @@ Include the library in your project as a dependency.
 For Maven projects, add the following to your `pom.xml`:
 
 ```
+<repositories>
+  <repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/Jester-6/dark/util</url>
+  </repository>
+</repositories>
+
 <dependency>
-  <groupId>com.d.util</groupId>
-  <artifactId>j-util</artifactId>
-  <version>1.0.0.0-SNAPSHOT</version>
+  <groupId>d.dark</groupId>
+  <artifactId>util</artifactId>
+  <version>1.0.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -42,7 +55,7 @@ public class Main {
 
         // Perform operations
         Complex sum = a.add(b); // (2 + 3i) + (4 - i)
-        Complex product = a.multiply(b); // (2 + 3i) * (4 - i)
+        Complex product = a.mul(b); // (2 + 3i) * (4 - i)
         Complex conjugate = a.conjugate(); // Conjugate of (2 + 3i)
 
         // Display results
@@ -56,9 +69,12 @@ public class Main {
 #### Key Methods in `Complex`
 
 -   **`add(Complex other)`**: Returns the sum of this complex number and another.
--   **`subtract(Complex other)`**: Returns the difference between this complex number and another.
--   **`multiply(Complex other)`**: Returns the product of this complex number and another.
--   **`divide(Complex other)`**: Returns the quotient of this complex number divided by another.
+-   **`sub(Complex other)`**: Returns the difference between this complex number and another.
+-   **`mul(Complex other)`**: Returns the product of this complex number and another.
+-   **`div(Complex other)`**: Returns the quotient of this complex number divided by another.
+-   **`pow(double power)`**: Returns this complex number raised to the given power.
+-   **`root(double power)`**: Returns the root of this number.
 -   **`conjugate()`**: Returns the complex conjugate of this number.
 -   **`magnitude()`**: Returns the magnitude (absolute value) of this complex number.
+-   **`argument()`**: Returns the argument (angle to real axis) of this complex number.
 -   **`toString()`**: Provides a string representation of the complex number.
