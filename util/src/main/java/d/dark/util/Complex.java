@@ -1,24 +1,23 @@
 package d.dark.util;
 
+import java.util.Objects;
+
 /**
  * <h1>Complex Number</h1> <br>
- * A class representing a <big>complex number</big> in the form `a + bi` with
- * double precision, where:
+ * A class representing a <big>complex number</big> in the form `a + bi`, where:
  * <ul>
  * <li><b>a</b> is the real part</li>
  * <li><b>b</b> is the imaginary part</li>
  * </ul>
- * for float precision Complex number, use {@link ComplexF}
  * <p>
  * It provides methods for performing common operations on complex numbers such
  * as:
  * <ul>
- * <li>Addition: {@link #add(ComplexNumber)}</li>
- * <li>Substraction: {@link #sub(ComplexNumber)}</li>
- * <li>Multiplication: {@link #mul(double)}, {@link #mul(ComplexNumber)}</li>
- * <li>Division: {@link #div(double)}, {@link #div(ComplexNumber)}</li>
- * <li>Raising to the power: {@link #pow(double)},
- * {@link #pow(ComplexNumber)}</li>
+ * <li>Addition: {@link #add(Complex)}</li>
+ * <li>Substraction: {@link #sub(Complex)}</li>
+ * <li>Multiplication: {@link #mul(double)}, {@link #mul(Complex)}</li>
+ * <li>Division: {@link #div(double)}, {@link #div(Complex)}</li>
+ * <li>Raising to the power: {@link #pow(double)}, {@link #pow(Complex)}</li>
  * <li>Root: {@link #root(double)}</li>
  * <li>Exponential: {@link #exp()}</li>
  * <li>Natural Logarithm: {@link #ln()}</li>
@@ -38,12 +37,18 @@ package d.dark.util;
  * </pre>
  * </p>
  */
-public class Complex extends ComplexNumber {
+public class Complex implements Comparable<Complex> {
+
+	/* Invalid Complex Number */
+	public static final Complex NaN = new Complex(Double.NaN, Double.NaN);
 
 	/* Immutable real part of the complex number */
 	public final double r;
 	/* Immutable imaginary part of the complex number */
 	public final double i;
+
+	private final double modulus;
+	private final double argument;
 
 	/**
 	 * Default constructor initializing the complex number to {@code 0 + 0i}.
@@ -65,7 +70,7 @@ public class Complex extends ComplexNumber {
 	 * @param complex the complex number to copy
 	 * @see #Complex(double, double)
 	 */
-	public Complex(ComplexNumber complex) { this(complex.getR(), complex.getI()); }
+	public Complex(Complex complex) { this(complex.getR(), complex.getI()); }
 
 	/**
 	 * Constructor initializing the complex number with the given real and imaginary
@@ -77,98 +82,478 @@ public class Complex extends ComplexNumber {
 	public Complex(double real, double imaginary) {
 		this.r = real;
 		this.i = imaginary;
+		this.modulus = Math.sqrt(r * r + i * i);
+		this.argument = Math.atan2(getI(), getR());
 	}
 
-	@Override
-	public Complex add(ComplexNumber c) { return add(c.getR(), c.getI()); }
+	/**
+	 * Adds another complex number to this complex number.
+	 *
+	 * @param c the complex number to add
+	 * @return a new {@link Complex} representing the sum
+	 * @see #add(double)
+	 * @see #add(double, double)
+	 */
+	public Complex add(Complex c) { return add(c.getR(), c.getI()); }
 
-	@Override
+	/**
+	 * Adds real number to this complex number.
+	 *
+	 * @param r the real part to add
+	 * @return a new {@link Complex} representing the sum
+	 * @see #add(Complex)
+	 * @see #add(double, double)
+	 */
 	public Complex add(double r) { return new Complex(this.r + r, this.i); }
 
-	@Override
+	/**
+	 * Adds a real and imaginary number to this complex number.
+	 *
+	 * @param r the real part to add
+	 * @param i the imaginary part to add
+	 * @return a new {@link Complex} representing the sum
+	 * @see #add(Complex)
+	 * @see #add(double)
+	 */
 	public Complex add(double r, double i) { return new Complex(this.r + r, this.i + i); }
 
-	@Override
-	public Complex sub(ComplexNumber c) { return sub(c.getR(), c.getI()); }
+	/**
+	 * Subtracts another complex number from this complex number.
+	 *
+	 * @param c the complex number to substract
+	 * @return a new {@link Complex} representing the difference
+	 * @see #sub(double)
+	 * @see #sub(double, double)
+	 */
+	public Complex sub(Complex c) { return sub(c.getR(), c.getI()); }
 
-	@Override
+	/**
+	 * Subtracts a real number from this complex number.
+	 *
+	 * @param r the real part to substract
+	 * @return a new {@link Complex} representing the difference
+	 * @see #sub(Complex)
+	 * @see #sub(double, double)
+	 */
 	public Complex sub(double r) { return new Complex(this.r - r, this.i); }
 
-	@Override
+	/**
+	 * Subtracts a real and imaginary number from this complex number.
+	 *
+	 * @param r the real part to substract
+	 * @param r the imaginary part to substract
+	 * @return a new {@link Complex} representing the difference
+	 * @see #sub(Complex)
+	 * @see #sub(double)
+	 */
 	public Complex sub(double r, double i) { return new Complex(this.r - r, this.i - i); }
 
-	@Override
-	public Complex mul(ComplexNumber c) { return mul(c.getR(), c.getI()); }
+	/**
+	 * Multiplies this complex number with another complex number.
+	 *
+	 * @param c the complex number to multiply by
+	 * @return a new {@link Complex} representing the product
+	 * @see #mul(double)
+	 * @see #mul(double, double)
+	 */
+	public Complex mul(Complex c) { return mul(c.getR(), c.getI()); }
 
-	@Override
+	/**
+	 * Multiplies this complex number by a real number.
+	 *
+	 * @param r the value to multiply by
+	 * @return a new {@link Complex} representing the product
+	 * @see #mul(Complex)
+	 * @see #mul(double, double)
+	 */
 	public Complex mul(double r) { return new Complex(this.r * r, this.i * r); }
 
-	@Override
+	/**
+	 * Multiplies this complex number by a real and imaginary number.
+	 *
+	 * @param r the real part to multiply by
+	 * @param i the imaginary part to multiply by
+	 * @return a new {@link Complex} representing the product
+	 * @see #mul(Complex)
+	 * @see #mul(double)
+	 */
 	public Complex mul(double r, double i) { return new Complex(this.r * r - this.i * i, this.r * i + this.i * r); }
 
-	@Override
-	public Complex div(ComplexNumber c) { return div(c.getR(), c.getI()); }
+	/**
+	 * Divides this complex number by another complex number.
+	 *
+	 * @param c the complex number to divide by
+	 * @return a new {@link Complex} representing the quotient
+	 * @see #div(double)
+	 * @see #div(double, double)
+	 */
+	public Complex div(Complex c) { return div(c.getR(), c.getI()); }
 
-	@Override
-	public Complex div(double r, double i) { return (Complex) super.div(r, i); }
+	/**
+	 * Divides this complex number by a real number.
+	 *
+	 * @param r the real part to divide by
+	 * @return a new {@link Complex} representing the quotient
+	 * @see #div(Complex)
+	 * @see #div(double, double)
+	 */
+	public Complex div(double r) {
+		if (Math.abs(r) < Math.ulp(r)) { return NaN; }
+		return new Complex(this.getR() / r, this.getI() / r);
+	}
 
-	@Override
-	public Complex div(double r) { return new Complex(this.r / r, this.i / r); }
+	/**
+	 * Divides this complex number by a real and imaginary number.
+	 *
+	 * @param r the real part to divide by
+	 * @param i the imaginary part to divide by
+	 * @return a new {@link Complex} representing the quotient
+	 * @see #div(Complex)
+	 * @see #div(double)
+	 */
+	public Complex div(double r, double i) {
+		double A = this.getR() * r + this.getI() * i;
+		double B = this.getI() * r - this.getR() * i;
+		double div = r * r + i * i;
+		if (Math.abs(div) < Math.ulp(div)) { return NaN; }
+		return new Complex(A / div, B / div);
+	}
 
-	@Override
-	public Complex pow(double exponent) { return (Complex) super.pow(exponent); }
+	/**
+	 * Raises this complex number to a given power.
+	 *
+	 * @param power the exponent to which the complex number is raised
+	 * @return this complex number after exponentiation
+	 * @see #root(double)
+	 */
+	public Complex pow(double exponent) {
+		double A = Math.pow(this.magnitude(), exponent);
+		double cos = Math.cos(exponent * this.argument);
+		double sin = Math.sin(exponent * this.argument);
+		return new Complex(A * cos, A * sin);
+	}
 
-	@Override
-	public Complex pow(ComplexNumber exponent) { return (Complex) super.pow(exponent); }
+	/**
+	 * Raises this complex number to the power of another complex number.
+	 *
+	 * @param exponent the complex exponent
+	 * @return a new {@link Complex} representing this^exponent
+	 */
+	public Complex pow(Complex exponent) {
+		// TODO reduce object creation
+		Complex logBase = this.ln();
+		Complex result = logBase.mul(exponent);
+		return result.exp();
+	}
 
-	@Override
-	public Complex root(double root) { return (Complex) super.root(root); }
+	/**
+	 * Computes the root of this complex number.
+	 *
+	 * @param root the root to compute (e.g., 2 for square root, 3 for cube root)
+	 * @return this complex number after computing the root
+	 * @see #pow(double)
+	 */
+	public Complex root(double root) {
+		if (Math.abs(root) < Math.ulp(root)) { return NaN; }
+		double len = this.modulus;
+		double phi = this.argument / root;
+		double A = Math.pow(len, 1.0 / root);
+		double cos = Math.cos(phi);
+		double sin = Math.sin(phi);
+		return new Complex(A * cos, A * sin);
+	}
 
-	@Override
-	public Complex exp() { return (Complex) super.exp(); }
+	/**
+	 * Computes the exponential of this complex number.
+	 *
+	 * @return a new {@link Complex} representing e^(this)
+	 */
+	public Complex exp() {
+		double expReal = Math.exp(this.getR());
+		return new Complex(expReal * Math.cos(this.getI()), expReal * Math.sin(this.getI()));
+	}
 
-	@Override
-	public Complex ln() { return (Complex) super.ln(); }
+	/**
+	 * Computes the natural logarithm of this complex number.
+	 *
+	 * @return a new {@link Complex} representing ln(this)
+	 */
+	public Complex ln() { return new Complex(Math.log(this.modulus), this.argument); }
 
-	@Override
-	public Complex sin() { return (Complex) super.sin(); }
+	/**
+	 * Computes the sine of this complex number.
+	 *
+	 * @return a new {@link Complex} representing sin(this)
+	 */
+	public Complex sin() {
+		double realPart = Math.sin(this.getR()) * Math.cosh(this.getI());
+		double imaginaryPart = Math.cos(this.getR()) * Math.sinh(this.getI());
+		return new Complex(realPart, imaginaryPart);
+	}
 
-	@Override
-	public Complex cos() { return (Complex) super.cos(); }
+	/**
+	 * Computes the cosine of this complex number.
+	 *
+	 * @return a new {@link Complex} representing cos(this)
+	 */
+	public Complex cos() {
+		double realPart = Math.cos(this.getR()) * Math.cosh(this.getI());
+		double imaginaryPart = -Math.sin(this.getR()) * Math.sinh(this.getI());
+		return new Complex(realPart, imaginaryPart);
+	}
 
-	@Override
-	public Complex tan() { return (Complex) super.tan(); }
+	// TODO: reduce object creation
+	/**
+	 * Computes the tangent of this complex number.
+	 *
+	 * @return a new {@link Complex} representing tan(this)
+	 */
+	public Complex tan() { return this.sin().div(this.cos()); }
 
-	@Override
-	public Complex sinh() { return (Complex) super.sinh(); }
+	/**
+	 * Computes the hyperbolic sine of this complex number.
+	 *
+	 * @return a new {@link Complex} representing sinh(this)
+	 */
+	public Complex sinh() {
+		double realPart = Math.sinh(this.getR()) * Math.cos(this.getI());
+		double imaginaryPart = Math.cosh(this.getR()) * Math.sin(this.getI());
+		return new Complex(realPart, imaginaryPart);
+	}
 
-	@Override
+	/**
+	 * Computes the conjugate of this complex number.
+	 *
+	 * Conjugate is represented by 'a - bi'.
+	 *
+	 * @return a new {@link Complex} object representing the conjugate, with the
+	 *         same real part and negated imaginary part
+	 */
 	public Complex conjugate() { return new Complex(this.r, -this.i); }
 
-	@Override
+	/**
+	 * Projects this complex number onto the real axis.
+	 *
+	 * @return a new {@link Complex} with the same real part and zero imaginary part
+	 */
 	public Complex projectOntoReal() { return new Complex(this.r, 0); }
 
-	@Override
+	/**
+	 * Projects this complex number onto the imaginary axis.
+	 *
+	 * @return a new {@link Complex} with zero real part and the same imaginary part
+	 */
 	public Complex projectOntoImaginary() { return new Complex(0, this.i); }
 
-	public static Complex sum(ComplexNumber a, ComplexNumber b) { return (Complex) ComplexNumber.sum(a, b); }
+	/**
+	 * Computes the squared magnitude (absolute value squared) of this complex
+	 * number.
+	 *
+	 * @return the squared magnitude, computed as {@code r^2 + i^2}
+	 * @see #magnitude()
+	 */
+	public double absoluteValue() { return getR() * getR() + getI() * getI(); }
 
-	public static Complex difference(ComplexNumber a, ComplexNumber b) { return (Complex) ComplexNumber.difference(a, b); }
+	/**
+	 * Computes the sum of two complex numbers.
+	 *
+	 * @param a the first complex number
+	 * @param b the second complex number
+	 * @return a new {@link Complex} object representing the sum
+	 * @see #add(Complex)
+	 */
+	public static Complex sum(Complex a, Complex b) { return sum(a, b); }
 
-	public static Complex product(ComplexNumber a, ComplexNumber b) { return (Complex) ComplexNumber.product(a, b); }
+	/**
+	 * Computes the difference of two complex numbers.
+	 *
+	 * @param a the first complex number
+	 * @param b the second complex number
+	 * @return a new {@link Complex} object representing the difference
+	 * @see #sub(Complex)
+	 */
+	public static Complex difference(Complex a, Complex b) { return difference(a, b); }
 
-	public static Complex quotient(ComplexNumber a, ComplexNumber b) { return (Complex) ComplexNumber.quotient(a, b); }
+	/**
+	 * Computes the product of two complex numbers.
+	 *
+	 * @param a the first complex number
+	 * @param b the second complex number
+	 * @return a new {@link Complex} object representing the product
+	 * @see #mul(Complex)
+	 */
+	public static Complex product(Complex a, Complex b) { return product(a, b); }
 
-	@Override
+	/**
+	 * Computes the quotient of two complex numbers.
+	 *
+	 * @param a the numerator complex number
+	 * @param b the denominator complex number
+	 * @return a new {@link Complex} object representing the quotient
+	 * @see #div(Complex)
+	 */
+	public static Complex quotient(Complex a, Complex b) { return quotient(a, b); }
+
+	/**
+	 * Computes the distance to another complex number.
+	 *
+	 * @param c the other complex number to calculate distance to
+	 * @return the distance between this complex number and other complex number
+	 */
+	public double distanceTo(Complex c) { return distanceTo(c.getR(), c.getI()); }
+
+	/**
+	 * Computes the distance to a real nmumber.
+	 *
+	 * @param r the real part to calculate distance to
+	 * @return the distance between this complex number and other complex number
+	 */
+	public double distanceTo(double r) {
+		double dr = this.getR() - r;
+		return Math.sqrt(dr * dr + this.i * this.i);
+	}
+
+	/**
+	 * Computes the distance to another complex number.
+	 *
+	 * @param r the real part to calculate distance to
+	 * @param i the imaginary part to calculate distance to
+	 * @return the distance between this complex number and real and imaginary parts
+	 */
+	public double distanceTo(double r, double i) {
+		double dr = this.getR() - r;
+		double di = this.getI() - i;
+		return Math.sqrt(dr * dr + di * di);
+	}
+
+	/**
+	 * Computes the magnitude (modulus) of this complex number.
+	 *
+	 * @return the magnitude, computed as {@code sqrt(r^2 + i^2)}
+	 * @see #absoluteValue()
+	 */
+	public double magnitude() { return this.modulus; }
+
+	/**
+	 * Computes the modulus (magnitude) of this complex number.
+	 *
+	 * @return the modulus, computed as {@code sqrt(r^2 + i^2)}
+	 * @see #absoluteValue()
+	 */
+	public double modulus() { return magnitude(); }
+
+	/**
+	 * Computes the argument (angle) of this complex number.
+	 *
+	 * @return the argument in radians, computed as {@code atan2(i, r)}
+	 * @see Math#atan2(double, double)
+	 */
+	public double argument() { return this.argument; }
+
+	/**
+	 * Computes the angle (argument) of this complex number.
+	 *
+	 * @return the angle in radians, computed as {@code atan2(i, r)}
+	 * @see Math#atan2(double, double)
+	 */
+	public double angle() { return argument(); }
+
+	/**
+	 * Gets the {@code real part} of this complex number.
+	 *
+	 * @return the imaginary part
+	 */
 	public double getR() { return r; }
 
-	@Override
+	/**
+	 * Gets the {@code imaginary part} of this complex number.
+	 *
+	 * @return the imaginary part
+	 */
 	public double getI() { return i; }
 
 	@Override
-	public float floatR() { return (float) r; }
+	public int hashCode() { return Objects.hash(r, i); }
 
 	@Override
-	public float floatI() { return (float) i; }
+	public boolean equals(Object obj) {
+		if (this == obj) { return true; }
+		if ((obj == null) || (getClass() != obj.getClass())) {
+			if (obj instanceof Number n) { return testTwoValues(this.getR(), n.doubleValue()) && testTwoValues(this.getI(), 0.0); }
+			return false;
+		}
+		Complex other = (Complex) obj;
+		return testTwoValues(this.getR(), other.getR()) && testTwoValues(this.getI(), other.getI());
+	}
 
+	/**
+	 * Checks if this complex number is approximately equal to another.
+	 *
+	 * @param other   the other complex number
+	 * @param epsilon the tolerance for equality
+	 * @return true if the numbers are approximately equal, false otherwise
+	 */
+	public boolean equals(Complex other, double epsilon) {
+		return Math.abs(this.getR() - other.getR()) < epsilon && Math.abs(this.getI() - other.getI()) < epsilon;
+	}
+
+	public boolean isZero() { return Math.abs(r) < Math.ulp(r) && Math.abs(r) < Math.ulp(i); }
+
+	public boolean isUnit() { return Math.abs(magnitude() - 1.0) < Math.ulp(1.0); }
+
+	@Override
+	public int compareTo(Complex o) {
+		if (testTwoValues(this.r, o.r)) {
+			return testTwoValues(this.i, o.i) ? 0 : this.i > o.i ? 1 : -1;
+		} else {
+			return this.r > o.r ? 1 : -1;
+		}
+	}
+
+	private boolean testTwoValues(double v1, double v2) { return Math.abs(v1 - v2) < Math.ulp(v2); }
+
+	/**
+	 * Returns a string representation of this complex number.
+	 * <p>
+	 * The string representation is formatted as:
+	 * <ul>
+	 * <li><code>0</code> if both real and imaginary parts are zero</li>
+	 * <li><code>a</code> if the imaginary part is zero</li>
+	 * <li><code>bi</code> if the real part is zero</li>
+	 * <li><code>(a + bi)</code> if both parts are nonzero</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @return the string representation of this complex number
+	 */
+	@Override
+	public String toString() {
+		String real = roundStr(getR());
+		String imaginary = roundStr(getI());
+
+		if (real.isBlank() && imaginary.isBlank()) {
+			return "0";
+		} else if (real.isBlank()) {
+			return imaginary + "i";
+		} else if (imaginary.isBlank()) {
+			return real;
+		} else {
+			imaginary = imaginary.startsWith("-") ? imaginary.replace("-", " - ") : " + " + imaginary;
+			return "(" + real + imaginary + "i)";
+		}
+	}
+
+	/**
+	 * Rounds the given value to 5 decimal places and converts it to a string.
+	 *
+	 * @param val the value to round
+	 * @return the rounded value as a string, or an empty string if the result is
+	 *         zero
+	 */
+	private String roundStr(double val) {
+		String roundedStr = String.valueOf(Math.round(val * 100000) / 100000.0);
+		if (roundedStr.endsWith(".0")) { roundedStr = roundedStr.replace(".0", ""); }
+		if (roundedStr.equals("0") || roundedStr.equals("-0")) { roundedStr = ""; }
+		return roundedStr;
+	}
 }
