@@ -39,8 +39,10 @@ import java.util.Objects;
  */
 public class Complex implements Comparable<Complex> {
 
-	/* Invalid Complex Number */
-	public static final Complex NaN = new Complex(Double.NaN, Double.NaN);
+	private static final double EPSILON = 0.00001;
+
+	/* Null Complex Number */
+	public static final Complex ZERO = new Complex(0, 0);
 
 	/* Immutable real part of the complex number */
 	public final double r;
@@ -198,7 +200,7 @@ public class Complex implements Comparable<Complex> {
 	 * @see #div(double, double)
 	 */
 	public Complex div(double r) {
-		if (Math.abs(r) < Math.ulp(r)) { return NaN; }
+		if (Math.abs(r) < Math.ulp(r)) { return ZERO; }
 		return new Complex(this.getR() / r, this.getI() / r);
 	}
 
@@ -215,7 +217,7 @@ public class Complex implements Comparable<Complex> {
 		double A = this.getR() * r + this.getI() * i;
 		double B = this.getI() * r - this.getR() * i;
 		double div = r * r + i * i;
-		if (Math.abs(div) < Math.ulp(div)) { return NaN; }
+		if (Math.abs(div) < Math.ulp(div)) { return ZERO; }
 		return new Complex(A / div, B / div);
 	}
 
@@ -227,6 +229,7 @@ public class Complex implements Comparable<Complex> {
 	 * @see #root(double)
 	 */
 	public Complex pow(double exponent) {
+		if (compareNumbers(exponent, 0.0, EPSILON)) { return new Complex(1.0, 0.0); }
 		double A = Math.pow(this.magnitude(), exponent);
 		double cos = Math.cos(exponent * this.argument);
 		double sin = Math.sin(exponent * this.argument);
@@ -240,6 +243,7 @@ public class Complex implements Comparable<Complex> {
 	 * @return a new {@link Complex} representing this^exponent
 	 */
 	public Complex pow(Complex exponent) {
+		if (compareNumbers(exponent.r, 0.0, EPSILON) && compareNumbers(exponent.i, 0.0, EPSILON)) { return new Complex(1.0, 0.0); }
 		// TODO reduce object creation
 		Complex logBase = this.ln();
 		Complex result = logBase.mul(exponent);
@@ -254,7 +258,7 @@ public class Complex implements Comparable<Complex> {
 	 * @see #pow(double)
 	 */
 	public Complex root(double root) {
-		if (Math.abs(root) < Math.ulp(root)) { return NaN; }
+		if (Math.abs(root) < Math.ulp(root)) { return ZERO; }
 		double len = this.modulus;
 		double phi = this.argument / root;
 		double A = Math.pow(len, 1.0 / root);
@@ -479,11 +483,11 @@ public class Complex implements Comparable<Complex> {
 	public boolean equals(Object obj) {
 		if (this == obj) { return true; }
 		if ((obj == null) || (getClass() != obj.getClass())) {
-			if (obj instanceof Number n) { return testTwoValues(this.getR(), n.doubleValue()) && testTwoValues(this.getI(), 0.0); }
+			if (obj instanceof Number n) { return equals(n.doubleValue(), EPSILON); }
 			return false;
 		}
 		Complex other = (Complex) obj;
-		return testTwoValues(this.getR(), other.getR()) && testTwoValues(this.getI(), other.getI());
+		return equals(other, EPSILON);
 	}
 
 	/**
@@ -493,24 +497,82 @@ public class Complex implements Comparable<Complex> {
 	 * @param epsilon the tolerance for equality
 	 * @return true if the numbers are approximately equal, false otherwise
 	 */
-	public boolean equals(Complex other, double epsilon) {
-		return Math.abs(this.getR() - other.getR()) < epsilon && Math.abs(this.getI() - other.getI()) < epsilon;
+	public boolean equals(Complex other, double epsilon) { return equals(other.r, other.i, epsilon); }
+
+	/**
+	 * Checks if this complex number is approximately equal to a number.
+	 *
+	 * @param r       the other number to compare with
+	 * @param epsilon the tolerance for equality
+	 * @return true if the numbers are approximately equal, false otherwise
+	 */
+	public boolean equals(double r, double epsilon) { return compareNumbers(this.r, r, epsilon) && compareNumbers(this.i, 0.0, epsilon); }
+
+	/**
+	 * Checks if this complex number is approximately equal to a real and imaginary
+	 * parts.
+	 *
+	 * @param r       the real part of the other complex number
+	 * @param i       the imaginary part of the other complex number
+	 * @param epsilon the tolerance for equality
+	 * @return true if the numbers are approximately equal, false otherwise
+	 */
+	public boolean equals(double r, double i, double epsilon) { return compareNumbers(this.r, r, epsilon) && compareNumbers(this.i, i, epsilon); }
+
+	private boolean compareNumbers(double r1, double r2, double epsilon) {
+		double t = Math.abs(r1) + Math.abs(r2);
+		if (t > epsilon) { epsilon *= t; }
+		return Math.abs(r1 - r2) <= epsilon;
 	}
 
-	public boolean isZero() { return Math.abs(r) < Math.ulp(r) && Math.abs(r) < Math.ulp(i); }
+	/**
+	 * Tests if both real and imaginary part of this complex number is approximately
+	 * equal to 0
+	 *
+	 * @param epsilon the tolerance for equality
+	 * @return true if real and imaginary parts of this complex numer equals
+	 *         approximately 0.0
+	 */
+	public boolean isZero(double epsilon) { return Math.abs(r) < epsilon && Math.abs(i) < epsilon; }
 
-	public boolean isUnit() { return Math.abs(magnitude() - 1.0) < Math.ulp(1.0); }
+	/**
+	 * Tests if magnitude of this complex number is approximately equal to 1
+	 *
+	 * @param epsilon the tolerance for equality
+	 * @return true if the magnitude of this complex number is approximately equal
+	 *         to 1.0
+	 */
+	public boolean isUnit(double epsilon) { return Math.abs(magnitude() - 1.0) < epsilon; }
+
+	/**
+	 * Tests if both real and imaginary part of this complex number is approximately
+	 * equal to 0.<br>
+	 * Tolerance is equal to {@value #EPSILON}
+	 *
+	 * @return true if real and imaginary parts of this complex numer equals
+	 *         approximately 0.0
+	 * @see isZero(double)
+	 */
+	public boolean isZero() { return isZero(EPSILON); }
+
+	/**
+	 * Tests if magnitude of this complex number is approximately equal to 1.<br>
+	 * Tolerance is equal to {@value #EPSILON}
+	 *
+	 * @return true if the magnitude of this complex number is approximately equal
+	 *         to 1.0
+	 * @see isUnit(double)
+	 */
+	public boolean isUnit() { return isUnit(EPSILON); }
 
 	@Override
 	public int compareTo(Complex o) {
-		if (testTwoValues(this.r, o.r)) {
-			return testTwoValues(this.i, o.i) ? 0 : this.i > o.i ? 1 : -1;
+		if (Math.abs(this.r - o.r) < EPSILON) {
+			return Math.abs(this.i + o.i) < EPSILON ? 0 : this.i > o.i ? 1 : -1;
 		} else {
 			return this.r > o.r ? 1 : -1;
 		}
 	}
-
-	private boolean testTwoValues(double v1, double v2) { return Math.abs(v1 - v2) < Math.ulp(v2); }
 
 	/**
 	 * Returns a string representation of this complex number.
