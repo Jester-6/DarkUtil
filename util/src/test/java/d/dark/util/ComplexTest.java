@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-public class AppTest {
+public class ComplexTest {
 
 	private final Object[][] values = {
 			{ new Complex(2, 3), new Complex(1, 6) },
@@ -20,25 +20,25 @@ public class AppTest {
 
 	@Test
 	public void testComplex() {
-		test("Addition", "+", true, Complex::add, Complex::add);
-		test("Subtraction", "-", true, Complex::sub, Complex::sub);
-		test("Multiplication", "*", true, Complex::mul, Complex::mul);
-		test("Division", "/", true, Complex::div, Complex::div);
-		test("Power", "^", true, Complex::pow, Complex::pow);
-		test("Root", "√", true, null, Complex::root);
-		test("Natural logarithm", "ln", (c1) -> c1.ln());
-		test("Tangens", "tan", (c1) -> c1.tan());
-		test("Exponential", "exp", (c1) -> c1.exp());
-		test("Natural Logarithm", "ln", (c1) -> c1.ln());
-		test("Conjugate", "conj", (c1) -> c1.conjugate());
-		test("Magnitude", "mag", (c1) -> c1.magnitude());
-		test("Argument", "arg", (c1) -> Math.toDegrees(c1.argument()) + "°");
-		test("Is Zero", "isZero", (c1) -> c1.isZero());
-		test("Is Unit", "isUnit", (c1) -> c1.isUnit());
+		complexTest("Addition", "+", true, Complex::add, Complex::add);
+		complexTest("Subtraction", "-", true, Complex::sub, Complex::sub);
+		complexTest("Multiplication", "*", true, Complex::mul, Complex::mul);
+		complexTest("Division", "/", true, Complex::div, Complex::div);
+		complexTest("Power", "^", true, Complex::pow, Complex::pow);
+		complexTest("Root", "√", true, null, Complex::root);
+		complexTest("Natural logarithm", "ln", (c1) -> c1.ln());
+		complexTest("Tangens", "tan", (c1) -> c1.tan());
+		complexTest("Exponential", "exp", (c1) -> c1.exp());
+		complexTest("Natural Logarithm", "ln", (c1) -> c1.ln());
+		complexTest("Conjugate", "conj", (c1) -> c1.conjugate());
+		complexTest("Magnitude", "mag", (c1) -> c1.magnitude());
+		complexTest("Argument", "arg", (c1) -> Math.toDegrees(c1.argument()) + "°");
+		complexTest("Is Zero", "isZero", (c1) -> c1.isZero());
+		complexTest("Is Unit", "isUnit", (c1) -> c1.isUnit());
 		assert (true);
 	}
 
-	private void test(String testName, String operation, Function<Complex, Object> c) {
+	private void complexTest(String testName, String operation, Function<Complex, Object> c) {
 		System.out.println(testName);
 		for (Object[] o : values) {
 			if (o.length == 2 && o[0] instanceof Complex c1) {
@@ -48,7 +48,7 @@ public class AppTest {
 		}
 	}
 
-	private void test(String testName, String operation, boolean testReal, BiFunction<Complex, Complex, Object> c, BiFunction<Complex, Double, Object> d) {
+	private void complexTest(String testName, String operation, boolean testReal, BiFunction<Complex, Complex, Object> c, BiFunction<Complex, Double, Object> d) {
 		System.out.println(testName);
 		for (Object[] o : values) {
 			if (o.length == 2 && o[0] instanceof Complex c1 && o[1] instanceof Complex c2) {

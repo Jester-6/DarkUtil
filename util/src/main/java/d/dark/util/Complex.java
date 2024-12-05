@@ -64,12 +64,12 @@ public class Complex implements Comparable<Complex> {
 	public Complex() { this(0, 0); }
 
 	/**
-	 * Constructor initializing the complex number with a real part of {@code 0} and
-	 * the given imaginary part.
+	 * Constructor initializing the complex number with a imaginary part of
+	 * {@code 0} and the given real part.
 	 *
-	 * @param imaginary the imaginary part of the complex number
+	 * @param real the real part of the complex number
 	 */
-	public Complex(double imaginary) { this(0, imaginary); }
+	public Complex(double real) { this(real, 0); }
 
 	/**
 	 * Constructor initializing the complex number as a copy of another complex
