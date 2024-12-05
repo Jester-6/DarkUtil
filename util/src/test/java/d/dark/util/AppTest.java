@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 public class AppTest {
 
 	private final Object[][] values = {
-			{ new Complex(1, 3), new Complex(2, 6) },
+			{ new Complex(2, 3), new Complex(1, 6) },
 			{ new Complex(4, -1), new Complex(2, 4) },
 			{ new Complex(-5.1, 3.6), new Complex(2.7, -4.2) },
 			{ new Complex(7.9, 4.2), new Complex(9.2, 0) },
@@ -26,6 +26,8 @@ public class AppTest {
 		test("Division", "/", true, Complex::div, Complex::div);
 		test("Power", "^", true, Complex::pow, Complex::pow);
 		test("Root", "√", true, null, Complex::root);
+		test("Natural logarithm", "ln", (c1) -> c1.ln());
+		test("Tangens", "tan", (c1) -> c1.tan());
 		test("Exponential", "exp", (c1) -> c1.exp());
 		test("Natural Logarithm", "ln", (c1) -> c1.ln());
 		test("Conjugate", "conj", (c1) -> c1.conjugate());

@@ -41,8 +41,14 @@ public class Complex implements Comparable<Complex> {
 
 	private static final double EPSILON = 0.00001;
 
-	/* Null Complex Number */
+	/* (0 + 0i) */
 	public static final Complex ZERO = new Complex(0, 0);
+
+	/* (Double.POSITIVE_INFINITY + 0i) */
+	public static final Complex INF = new Complex(Double.POSITIVE_INFINITY, 0);
+
+	/* (Double.NEGATIVE_INFINITY + 0i) */
+	public static final Complex NEG_INF = new Complex(Double.NEGATIVE_INFINITY, 0);
 
 	/* Immutable real part of the complex number */
 	public final double r;
@@ -189,7 +195,10 @@ public class Complex implements Comparable<Complex> {
 	 * @see #div(double)
 	 * @see #div(double, double)
 	 */
-	public Complex div(Complex c) { return div(c.getR(), c.getI()); }
+	public Complex div(Complex c) {
+		if (c.isZero()) { return INF; }
+		return div(c.getR(), c.getI());
+	}
 
 	/**
 	 * Divides this complex number by a real number.
@@ -200,7 +209,7 @@ public class Complex implements Comparable<Complex> {
 	 * @see #div(double, double)
 	 */
 	public Complex div(double r) {
-		if (Math.abs(r) < Math.ulp(r)) { return ZERO; }
+		if (Math.abs(r) <= Math.ulp(r)) { return INF; }
 		return new Complex(this.getR() / r, this.getI() / r);
 	}
 
@@ -217,7 +226,7 @@ public class Complex implements Comparable<Complex> {
 		double A = this.getR() * r + this.getI() * i;
 		double B = this.getI() * r - this.getR() * i;
 		double div = r * r + i * i;
-		if (Math.abs(div) < Math.ulp(div)) { return ZERO; }
+		if (Math.abs(div) < Math.ulp(div)) { return INF; }
 		return new Complex(A / div, B / div);
 	}
 
@@ -244,10 +253,11 @@ public class Complex implements Comparable<Complex> {
 	 */
 	public Complex pow(Complex exponent) {
 		if (compareNumbers(exponent.r, 0.0, EPSILON) && compareNumbers(exponent.i, 0.0, EPSILON)) { return new Complex(1.0, 0.0); }
-		// TODO reduce object creation
-		Complex logBase = this.ln();
-		Complex result = logBase.mul(exponent);
-		return result.exp();
+		double lnR = Math.log(this.modulus);
+		double mR = lnR * exponent.r - this.argument * exponent.i;
+		double mI = lnR * exponent.i + this.argument * exponent.r;
+		double expR = Math.exp(mR);
+		return new Complex(expR * Math.cos(mI), expR * Math.sin(mI));
 	}
 
 	/**
@@ -282,7 +292,10 @@ public class Complex implements Comparable<Complex> {
 	 *
 	 * @return a new {@link Complex} representing ln(this)
 	 */
-	public Complex ln() { return new Complex(Math.log(this.modulus), this.argument); }
+	public Complex ln() {
+		if (isZero()) { return NEG_INF; }
+		return new Complex(Math.log(this.modulus), this.argument);
+	}
 
 	/**
 	 * Computes the sine of this complex number.
@@ -306,13 +319,25 @@ public class Complex implements Comparable<Complex> {
 		return new Complex(realPart, imaginaryPart);
 	}
 
-	// TODO: reduce object creation
 	/**
 	 * Computes the tangent of this complex number.
 	 *
 	 * @return a new {@link Complex} representing tan(this)
 	 */
-	public Complex tan() { return this.sin().div(this.cos()); }
+	public Complex tan() {
+		double sinR = Math.sin(this.getR()) * Math.cosh(this.getI());
+		double sinI = Math.cos(this.getR()) * Math.sinh(this.getI());
+
+		double cosR = Math.cos(this.getR()) * Math.cosh(this.getI());
+		double cosI = -Math.sin(this.getR()) * Math.sinh(this.getI());
+
+		double A = sinR * cosR + sinI * cosI;
+		double B = sinI * cosR - sinR * cosI;
+		double div = cosR * cosR + cosI * cosI;
+		if (Math.abs(div) < Math.ulp(div)) { return ZERO; }
+
+		return new Complex(A / div, B / div);
+	}
 
 	/**
 	 * Computes the hyperbolic sine of this complex number.
@@ -613,6 +638,9 @@ public class Complex implements Comparable<Complex> {
 	 *         zero
 	 */
 	private String roundStr(double val) {
+		if (val == Double.POSITIVE_INFINITY) {
+			return "∞";
+		} else if (val == Double.NEGATIVE_INFINITY) { return "-∞"; }
 		String roundedStr = String.valueOf(Math.round(val * 100000) / 100000.0);
 		if (roundedStr.endsWith(".0")) { roundedStr = roundedStr.replace(".0", ""); }
 		if (roundedStr.equals("0") || roundedStr.equals("-0")) { roundedStr = ""; }
