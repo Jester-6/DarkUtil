@@ -14,17 +14,17 @@ import java.util.Objects;
  * as:
  * <ul>
  * <li>Addition: {@link #add(Complex)}</li>
- * <li>Substraction: {@link #sub(Complex)}</li>
+ * <li>Subtraction: {@link #sub(Complex)}</li>
  * <li>Multiplication: {@link #mul(double)}, {@link #mul(Complex)}</li>
  * <li>Division: {@link #div(double)}, {@link #div(Complex)}</li>
- * <li>Raising to the power: {@link #pow(double)}, {@link #pow(Complex)}</li>
+ * <li>Raising to a power: {@link #pow(double)}, {@link #pow(Complex)}</li>
  * <li>Root: {@link #root(double)}</li>
  * <li>Exponential: {@link #exp()}</li>
  * <li>Natural Logarithm: {@link #ln()}</li>
  * <li>Conjugate: {@link #conjugate()}</li>
  * <li>Magnitude (modulus): {@link #mag()}</li>
  * <li>Angle (argument): {@link #angle()}</li>
- * <li>Hyperbolic sine of this number: {@link #sinh()}</li>
+ * <li>Hyperbolic sine: {@link #sinh()}</li>
  * </ul>
  * </p>
  * <p>
@@ -64,7 +64,7 @@ public class Complex implements Comparable<Complex> {
 	public Complex() { this(0, 0); }
 
 	/**
-	 * Constructor initializing the complex number with a imaginary part of
+	 * Constructor initializing the complex number with an imaginary part of
 	 * {@code 0} and the given real part.
 	 *
 	 * @param real the real part of the complex number
@@ -105,7 +105,7 @@ public class Complex implements Comparable<Complex> {
 	public Complex add(Complex c) { return add(c.getR(), c.getI()); }
 
 	/**
-	 * Adds real number to this complex number.
+	 * Adds a real number to this complex number.
 	 *
 	 * @param r the real part to add
 	 * @return a new {@link Complex} representing the sum
@@ -128,7 +128,7 @@ public class Complex implements Comparable<Complex> {
 	/**
 	 * Subtracts another complex number from this complex number.
 	 *
-	 * @param c the complex number to substract
+	 * @param c the complex number to subtract
 	 * @return a new {@link Complex} representing the difference
 	 * @see #sub(double)
 	 * @see #sub(double, double)
@@ -138,7 +138,7 @@ public class Complex implements Comparable<Complex> {
 	/**
 	 * Subtracts a real number from this complex number.
 	 *
-	 * @param r the real part to substract
+	 * @param r the real part to subtract
 	 * @return a new {@link Complex} representing the difference
 	 * @see #sub(Complex)
 	 * @see #sub(double, double)
@@ -148,8 +148,8 @@ public class Complex implements Comparable<Complex> {
 	/**
 	 * Subtracts a real and imaginary number from this complex number.
 	 *
-	 * @param r the real part to substract
-	 * @param r the imaginary part to substract
+	 * @param r the real part to subtract
+	 * @param i the imaginary part to subtract
 	 * @return a new {@link Complex} representing the difference
 	 * @see #sub(Complex)
 	 * @see #sub(double)
@@ -157,7 +157,7 @@ public class Complex implements Comparable<Complex> {
 	public Complex sub(double r, double i) { return new Complex(this.r - r, this.i - i); }
 
 	/**
-	 * Multiplies this complex number with another complex number.
+	 * Multiplies this complex number by another complex number.
 	 *
 	 * @param c the complex number to multiply by
 	 * @return a new {@link Complex} representing the product
