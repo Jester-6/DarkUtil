@@ -12,7 +12,15 @@ This library provides utility classes for mathematical computations. It is desig
 
 ### `Complex` Class
 
-- The `Complex` class provides tools to work with complex numbers. It supports operations like addition, 	   subtraction, multiplication, division, and more.
+- The `Complex` class provides tools to work with complex numbers. It supports operations like addition, subtraction, multiplication, division, and more.
+
+### `Quaternion` Class
+
+- The `Quaternion` class provides tools to work with quaternions. It supports operations like addition, subtraction, multiplication, division, and more.
+
+### `Matrix` Class
+
+- The `Matrix` class [WIP].
 
 ----------
 
@@ -78,3 +86,23 @@ public class Main {
 -   **`magnitude()`**: Returns the magnitude (absolute value) of this complex number.
 -   **`argument()`**: Returns the argument (angle to real axis) of this complex number.
 -   **`toString()`**: Provides a string representation of the complex number.
+
+#### Key Methods in `Quaternion`
+
+-   **`add(Quaternion other)`**: Returns the sum of this quaternion and another.
+-   **`sub(Quaternion other)`**: Returns the difference between this quaternion and another.
+-   **`mul(Quaternion other)`**: Returns the product of this quaternion and another.
+-   **`div(Quaternion other)`**: Returns the quotient of this quaternion divided by another.
+-   **`pow(double power)`**: Returns this quaternion raised to the given power.
+-   **`root(double power)`**: Returns the root of this quaternion.
+-   **`conjugate()`**: Returns the quaternion conjugate of this quaternion.
+-   **`norm()`**: Returns the norm (absolute value) of this quaternion.
+-   **`toString()`**: Provides a string representation of the quaternion.
+
+#### Key Methods in `Matrix`
+
+-   **`identity()`**: Set this matrix to identity.
+-   **`zero()`**: Zeroes out all the values in this matrix.
+-   **`set()`**: Sets the specified cell to 'value'.
+-   **`get()`**: Sets the specified cell to 'value'.
+-   **`toString()`**: Provides a string representation of the matrix.
